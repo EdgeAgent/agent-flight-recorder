@@ -1,0 +1,42 @@
+{
+  "action": {
+    "default_icon": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    },
+    "default_title": "Agent Flight Recorder"
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "description": "See what AI agents did in your browser \u2014 timeline, one-click undo, exportable receipts. Local only. Zero data collected.",
+  "icons": {
+    "128": "icons/icon128.png",
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png"
+  },
+  "manifest_version": 3,
+  "minimum_chrome_version": "116",
+  "name": "Agent Flight Recorder",
+  "optional_host_permissions": [
+    "<all_urls>"
+  ],
+  "permissions": [
+    "tabs",
+    "webNavigation",
+    "downloads",
+    "storage",
+    "sidePanel",
+    "tabGroups",
+    "alarms",
+    "scripting"
+  ],
+  "side_panel": {
+    "default_path": "src/panel/panel.html"
+  },
+  "version": "1.0.0"
+}
