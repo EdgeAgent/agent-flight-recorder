@@ -1,0 +1,97 @@
+/* Agent Flight Recorder — side panel. Dark aviation-instrument aesthetic. */
+:root {
+  --bg: #0b0d11;
+  --card: #14181f;
+  --card-border: #242b38;
+  --text: #e8eaf0;
+  --muted: #8b94a5;
+  --accent: #ff7a1a;
+  --accent-soft: #ffb066;
+  --danger: #e5484d;
+  --ok: #46a758;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  min-width: 320px;
+}
+.topbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px 10px;
+  border-bottom: 3px solid var(--accent);
+  background: linear-gradient(180deg, #171b23, #10131a);
+  position: sticky; top: 0; z-index: 5;
+}
+.logo { width: 36px; height: 36px; border-radius: 8px; }
+.title-block { flex: 1; min-width: 0; }
+h1 { font-size: 15px; margin: 0; letter-spacing: .3px; }
+.status-line { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: #5a6373; flex: none; }
+.dot.rec { background: var(--danger); animation: pulse 1.2s ease-in-out infinite; }
+.dot.idle { background: #5a6373; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+.icon-btn { background: none; border: 1px solid var(--card-border); color: var(--muted); border-radius: 8px; width: 32px; height: 32px; font-size: 15px; cursor: pointer; }
+.icon-btn:hover { color: var(--text); border-color: var(--accent); }
+
+main { padding: 12px; display: flex; flex-direction: column; gap: 12px; max-width: 920px; margin: 0 auto; width: 100%; }
+.card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px 14px; }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent-soft); margin: 0; font-weight: 700; }
+.lede { margin: 0 0 10px; line-height: 1.45; color: #c9cfda; }
+.muted { color: var(--muted); }
+.small { font-size: 11.5px; line-height: 1.45; }
+.check-row { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; margin: 10px 0; line-height: 1.4; }
+.check-row input { margin-top: 2px; accent-color: var(--accent); width: 15px; height: 15px; flex: none; }
+.field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0; }
+.field-row input { width: 76px; background: #0d1015; border: 1px solid var(--card-border); color: var(--text); border-radius: 7px; padding: 6px 8px; font-family: var(--mono); }
+.btn {
+  background: #1d232e; color: var(--text); border: 1px solid var(--card-border);
+  border-radius: 9px; padding: 8px 12px; font-size: 12.5px; cursor: pointer; font-weight: 600;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #16100a; }
+.btn.primary:hover { background: #ff8c3d; }
+.btn.danger { background: transparent; border-color: var(--danger); color: #ff8589; }
+.btn.danger:hover { background: rgba(229, 72, 77, .12); }
+.btn.ghost { background: transparent; }
+.btn.big { width: 100%; padding: 11px; font-size: 13.5px; margin-top: 6px; }
+.btn.small-btn { padding: 4px 10px; font-size: 11.5px; }
+.danger-text { color: #ff8589; }
+.rec-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.rec-badge { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; letter-spacing: 1.5px; color: #ff8589; font-size: 12px; }
+.elapsed { font-family: var(--mono); font-size: 17px; color: var(--accent-soft); }
+.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.chip { background: #0d1015; border: 1px solid var(--card-border); border-radius: 9px; padding: 8px 6px; text-align: center; }
+.chip .v { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--accent-soft); }
+.chip .l { font-size: 9.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-top: 2px; }
+.chip.alert .v { color: #ff8589; }
+.confirm-box { border: 1px solid var(--accent); border-radius: 9px; padding: 10px; margin-top: 10px; background: rgba(255, 122, 26, .07); }
+.confirm-box p { margin: 0 0 8px; line-height: 1.45; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-line { margin: 8px 0 0; color: var(--accent-soft); font-size: 12px; }
+.timeline { display: flex; flex-direction: column; }
+.timeline .ev { display: flex; gap: 9px; padding: 5px 0 5px 2px; border-left: 2px solid #242b38; margin-left: 5px; padding-left: 12px; position: relative; }
+.timeline .ev::before { content: ""; position: absolute; left: -5px; top: 10px; width: 8px; height: 8px; border-radius: 50%; background: #39415a; }
+.timeline .ev.flag { background: rgba(229, 72, 77, .08); border-radius: 0 8px 8px 0; }
+.timeline .ev.flag::before { background: var(--danger); }
+.timeline .time { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; padding-top: 1px; }
+.timeline .glyph { width: 16px; text-align: center; flex: none; }
+.timeline .desc { line-height: 1.4; word-break: break-word; }
+.timeline.compact .ev { padding-top: 3px; padding-bottom: 3px; }
+.empty { text-align: center; padding: 14px 8px; }
+.empty p { margin: 4px 0; }
+.export-row { margin-top: 10px; }
+select { background: #0d1015; color: var(--text); border: 1px solid var(--card-border); border-radius: 7px; padding: 5px 7px; max-width: 55%; font-size: 12px; }
+.protected-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1c222d; }
+.protected-item:last-of-type { border-bottom: none; }
+.protected-item .p-url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--mono); font-size: 11.5px; }
+.protected-item button { flex: none; }
+.danger-zone { border-color: rgba(229, 72, 77, .45); }
+footer { padding: 10px 14px 14px; color: var(--muted); font-size: 11.5px; text-align: center; }
+footer .lock { filter: saturate(0); }

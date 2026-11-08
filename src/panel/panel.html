@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agent Flight Recorder</title>
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<header class="topbar">
+  <img class="logo" src="../../icons/icon48.png" alt="">
+  <div class="title-block">
+    <h1>Agent Flight Recorder</h1>
+    <div class="status-line"><span id="statusDot" class="dot idle"></span><span id="statusText">Not recording</span></div>
+  </div>
+  <button id="btnSettings" class="icon-btn" title="Settings" aria-label="Settings">⚙</button>
+</header>
+
+<main id="viewMain">
+  <!-- Arm / disarm -->
+  <section class="card" id="armCard">
+    <div id="idleControls">
+      <p class="lede">Arm the recorder <strong>before</strong> you let an AI agent drive your browser. Everything that happens in Chrome goes on the record — and you can undo the tab chaos afterwards.</p>
+      <label class="check-row">
+        <input type="checkbox" id="chkForms">
+        <span><strong>Also watch form activity</strong> <span class="muted">(optional)</span><br>
+        <span class="muted small" id="formsExplainer">Counts fields touched and form submits — <strong>never</strong> the values typed. Needs the all-sites permission, requested only if you tick this.</span></span>
+      </label>
+      <button id="btnArm" class="btn primary big">● Start watch session</button>
+    </div>
+    <div id="armedControls" hidden>
+      <div class="rec-row">
+        <span class="rec-badge"><span class="dot rec"></span> REC</span>
+        <span id="elapsed" class="elapsed">0s</span>
+        <span class="muted small">snapshot taken at arm time</span>
+      </div>
+      <button id="btnDisarm" class="btn danger big">■ End session &amp; save receipt</button>
+    </div>
+  </section>
+
+  <!-- Summary -->
+  <section class="card" id="summaryCard">
+    <div class="card-head"><h2>Flight data</h2><span id="sessionMeta" class="muted small"></span></div>
+    <div class="chips" id="summaryChips"></div>
+  </section>
+
+  <!-- Restore -->
+  <section class="card" id="restoreCard">
+    <div class="card-head"><h2>Undo</h2></div>
+    <p class="muted small">Restore the tabs exactly as they were when the session started: close everything opened since, reopen anything that was closed.</p>
+    <button id="btnRestore" class="btn">↩ Restore pre-session tabs</button>
+    <div id="restoreConfirm" class="confirm-box" hidden>
+      <p id="restorePlanText"></p>
+      <div class="row">
+        <button id="btnRestoreConfirm" class="btn primary">Restore now</button>
+        <button id="btnRestoreCancel" class="btn ghost">Cancel</button>
+      </div>
+    </div>
+    <p id="restoreResult" class="result-line" hidden></p>
+  </section>
+
+  <!-- Timeline -->
+  <section class="card" id="timelineCard">
+    <div class="card-head">
+      <h2>Timeline</h2>
+      <select id="sessionSelect" aria-label="Choose session"></select>
+    </div>
+    <div id="timelineList" class="timeline"></div>
+    <div id="timelineEmpty" class="empty" hidden>
+      <p><strong>Nothing on the tape yet.</strong></p>
+      <p class="muted small">Arm a watch session, let your agent work, and every tab, page, form and download will appear here — whether the agent mentions it or not.</p>
+    </div>
+    <div class="row export-row">
+      <button id="btnExportJson" class="btn ghost">Export receipt (JSON)</button>
+      <button id="btnExportHtml" class="btn ghost">Export report (HTML)</button>
+      <button id="btnForget" class="btn ghost danger-text" hidden>Delete session</button>
+    </div>
+  </section>
+
+  <!-- Protected tabs -->
+  <section class="card" id="protectedCard">
+    <div class="card-head"><h2>Protected tabs</h2></div>
+    <p class="muted small">Mark tabs an agent must never touch — your bank, your inbox. If a protected tab is navigated or closed during a watch session, it is flagged on the timeline.</p>
+    <div id="protectedList"></div>
+    <button id="btnProtectCurrent" class="btn ghost">🛡 Protect the current tab</button>
+  </section>
+
+  <!-- Journal -->
+  <section class="card" id="journalCard" hidden>
+    <div class="card-head"><h2>Tab journal</h2><span class="muted small">always-on, tabs only</span></div>
+    <div id="journalList" class="timeline compact"></div>
+  </section>
+</main>
+
+<main id="viewSettings" hidden>
+  <section class="card">
+    <div class="card-head"><h2>Settings</h2><button id="btnBack" class="btn ghost small-btn">← Back</button></div>
+
+    <label class="check-row">
+      <input type="checkbox" id="setJournal">
+      <span><strong>Always-on tab journal</strong><br><span class="muted small">Keeps a lightweight log of tab opens/closes and navigations even when no session is armed. Tabs only — no form watching.</span></span>
+    </label>
+
+    <label class="check-row">
+      <input type="checkbox" id="setTtl">
+      <span><strong>Auto-close agent tabs after a session</strong><br><span class="muted small">Tabs opened during a watch session are grouped as “Agent Session”. When the session ends, close them automatically after the delay below.</span></span>
+    </label>
+    <label class="field-row"><span>Auto-close delay (minutes)</span><input type="number" id="setTtlMinutes" min="1" max="1440" step="1"></label>
+    <label class="field-row"><span>Keep last N sessions</span><input type="number" id="setRetention" min="1" max="200" step="1"></label>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Form watching permission</h2></div>
+    <p class="muted small" id="permStatus">Checking…</p>
+    <p class="muted small">Form watching counts fields touched and submits on pages — it <strong>never</strong> reads what was typed. It needs access to all sites because agents can land anywhere. The recorder works fully without it (tabs, pages and downloads are still logged).</p>
+    <div class="row">
+      <button id="btnGrantPerm" class="btn">Grant all-sites access</button>
+      <button id="btnRevokePerm" class="btn ghost">Revoke</button>
+    </div>
+  </section>
+
+  <section class="card danger-zone">
+    <div class="card-head"><h2>Data</h2></div>
+    <p class="muted small">Everything the recorder knows lives in this browser's local storage. There is no account, no server, no sync. Wiping it is permanent.</p>
+    <button id="btnClearAll" class="btn danger">Erase all recorder data</button>
+    <p id="clearResult" class="result-line" hidden></p>
+  </section>
+</main>
+
+<footer>
+  <span class="lock">🔒</span> 100% local · zero network calls · form values are never recorded
+</footer>
+
+<script type="module" src="panel.js"></script>
+</body>
+</html>
